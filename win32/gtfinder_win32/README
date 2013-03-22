@@ -1,0 +1,2 @@
+GTFinder - filesystem search utility
+To build under winny you need GTK+ bundle libs and add it's basedir in Codeblocks GTK+ project

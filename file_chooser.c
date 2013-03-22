@@ -24,19 +24,20 @@
 
 GtkWidget *window;
 
-void shutdown()
+void shutdown_file_chooser()
 {
-	gtk_widget_destroy(window);
-	gtk_main_quit();
-	return;
+    gtk_widget_destroy(window);
+    gtk_main_quit();
+    return;
 }
 
-void box( int   argc,
+void file_chooser( int   argc,
           char *argv[] )
 {
     GtkWidget *button;
     GtkWidget *table;
     GtkWidget *label;
+    GtkWidget *chooser;
 
     gtk_init (&argc, &argv);
 
@@ -46,40 +47,55 @@ void box( int   argc,
     gtk_widget_set_size_request(GTK_WIDGET (window), 450, 300);
 
     /* Set the window title */
-    gtk_window_set_title (GTK_WINDOW (window), "GTQalc About");
+    gtk_window_set_title (GTK_WINDOW (window), "Index directory");
 
     /* Set a handler for delete_event that immediately
      * exits GTK. */
     g_signal_connect (window, "delete-event",
-                      G_CALLBACK (shutdown), NULL);
+                      G_CALLBACK (shutdown_file_chooser), NULL);
 
     /* Sets the border width of the window. */
     gtk_container_set_border_width (GTK_CONTAINER (window), 20);
 
     /* Create a 2x2 table */
-    table = gtk_table_new (8, 8, TRUE);
+    table = gtk_table_new (6, 6, TRUE);
 
     /* Put the table in the main window */
     gtk_container_add(GTK_CONTAINER (window), table);
 
-    const char *about = "Author: Jalil Karimov <jukarimov@gmail.com>\n" \
-			"License: GPL (see gpl.txt)\n" \
-			"Description: Desktop search utility\n";
-
     /* create a new label. */
-    label = gtk_label_new (about);
+    label = gtk_label_new ("Select folder to index files in");
 
+    chooser = gtk_file_chooser_dialog_new(
+        "Pick directory",
+        GTK_WINDOW(window),
+        GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+        NULL);
+
+    char *dirname = NULL;
+    if (gtk_dialog_run(GTK_DIALOG(chooser)) == GTK_RESPONSE_ACCEPT)
+    {
+        dirname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
+        printf("file_chooser: selected: '%s'\n", dirname);
+	list_files(dirname);
+    }
+
+    gtk_widget_destroy(chooser);
+
+    label = gtk_label_new (dirname);
     //gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
     gtk_table_set_homogeneous(GTK_TABLE (table), TRUE);
-    gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 8, 0, 8);
+    gtk_table_attach_defaults(GTK_TABLE (table), label, 0, 5, 0, 1);
 
     /* Create "Quit" button */
     button = gtk_button_new_with_label ("close");
 
     /* When the button is clicked, we call the "calculate" function*/
     g_signal_connect_swapped (button, "clicked",
-			      G_CALLBACK (shutdown),
-			      window);
+                  G_CALLBACK (shutdown_file_chooser),
+                  window);
 
     /* Insert the quit button into the both
      * lower quadrants of the table */
