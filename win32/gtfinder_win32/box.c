@@ -46,7 +46,7 @@ void box( int   argc,
     gtk_widget_set_size_request(GTK_WIDGET (window), 450, 300);
 
     /* Set the window title */
-    gtk_window_set_title (GTK_WINDOW (window), "GTQalc About");
+    gtk_window_set_title (GTK_WINDOW (window), "GTFinder About");
 
     /* Set a handler for delete_event that immediately
      * exits GTK. */

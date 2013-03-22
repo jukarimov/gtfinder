@@ -51,6 +51,8 @@ static void enter_callback_getquery(GtkWidget *widget,
 static void do_search(GtkWidget *widget,
                       GtkWidget *label)
 {
+    if (!query || !strlen(query))
+        return;
     printf("search: %s\n", query);
     reset_result();
     FILE *fp = fopen("list.txt", "r");
@@ -92,7 +94,7 @@ int main( int   argc,
     gtk_widget_set_size_request(GTK_WIDGET (window), 350, 300);
 
     /* Set the window title */
-    gtk_window_set_title (GTK_WINDOW (window), "GTQalc");
+    gtk_window_set_title (GTK_WINDOW (window), "GTFinder");
 
     /* Set a handler for delete_event that immediately
      * exits GTK. */
