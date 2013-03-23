@@ -21,6 +21,7 @@
 
 int list_files(char *parentdir)
 {
+  int file_count = 0;
   DIR *dir;
   struct dirent *de = NULL;
   char subdirs[1000][100];
@@ -44,13 +45,16 @@ seek:
       perror("Couldn't readdir ");
       goto out;
     }
-    if (strcmp(de->d_name, "..") != 0 && strcmp(de->d_name, ".") != 0)
+    if (strcmp(de->d_name, "..") != 0 && strcmp(de->d_name, ".") != 0) {
       fprintf(fp, "%s/%s\n", rootdir, de->d_name);
+      file_count++;
+    }
     while ((de = readdir(dir)) != NULL) 
     {
       if (!strcmp(de->d_name, "..") || !strcmp(de->d_name, "."))
         continue;
       fprintf(fp, "%s/%s\n", rootdir, de->d_name);
+      file_count++;
 
       if (de->d_type == 4) {
         strcpy(subdirs[isubdirs], rootdir);
@@ -59,6 +63,7 @@ seek:
 	isubdirs++;
       }
     }
+    closedir(dir);
     if (isubdirs > 0) {
       strcpy(rootdir, subdirs[--isubdirs]);
       goto seek;
@@ -68,7 +73,7 @@ out:
 
   fclose(fp);
 
-  return 0;
+  return file_count;
 }
 /*
 int main(int argc, char *argv[])

@@ -24,12 +24,13 @@ int iresult = 0;
 void reset_result() {
     iresult = 0;
 }
-void push_result(char *line) {
+int push_result(char *line) {
     if (iresult >= 999) {
        puts("Too many results...");
-       return;
+       return -1;
     }
     strcpy(result[iresult++], line);
+    return 0;
 }
 
 void delete_event( GtkWidget *widget,
@@ -54,12 +55,17 @@ static void do_search(GtkWidget *widget,
     if (!query || !strlen(query))
         return;
     printf("search: %s\n", query);
+    int err_toomany = 0;
+    char *err_toomany_msg = "too many results";
     reset_result();
     FILE *fp = fopen("list.txt", "r");
     char line[100];
     while (fgets(line, sizeof(line), fp)) {
         if (strstr(line, query)) {
-            push_result(line);
+            if (push_result(line) != 0) {
+		err_toomany = 1;
+                break;
+	    }
             printf("search: match: %s\n", line);
         }
     }
@@ -69,6 +75,9 @@ static void do_search(GtkWidget *widget,
     int i = 0;
     for (;i < iresult; i++) {
         strcat(results, result[i]);
+    }
+    if (err_toomany) {
+        strcat(results, err_toomany_msg);
     }
 
     gtk_label_set_text(GTK_LABEL(label), "");
