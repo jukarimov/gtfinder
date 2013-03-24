@@ -55,8 +55,10 @@ static void do_search(GtkWidget *widget,
     if (!query || !strlen(query))
         return;
     printf("search: %s\n", query);
+
     int err_toomany = 0;
     char *err_toomany_msg = "too many results";
+
     reset_result();
     FILE *fp = fopen("list.txt", "r");
     char line[100];

@@ -74,17 +74,21 @@ void file_chooser( int   argc,
         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
         NULL);
 
+    int file_count = 0;
     char *dirname = NULL;
     if (gtk_dialog_run(GTK_DIALOG(chooser)) == GTK_RESPONSE_ACCEPT)
     {
         dirname = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(chooser));
         printf("file_chooser: selected: '%s'\n", dirname);
-        list_files(dirname);
+	file_count = list_files(dirname);
     }
 
     gtk_widget_destroy(chooser);
 
-    label = gtk_label_new (dirname);
+    char labbuf[100];
+    sprintf(labbuf, "%s: %d files found", dirname, file_count);
+    label = gtk_label_new (labbuf);
+
     //gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
     gtk_table_set_homogeneous(GTK_TABLE (table), TRUE);
     gtk_table_attach_defaults(GTK_TABLE (table), label, 0, 5, 0, 1);
