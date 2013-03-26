@@ -26,10 +26,10 @@ int list_files(char *parentdir)
   int file_count = 0;
   GDir *dir;
   GError *err;
-  char subdirs[1000][100];
+  char subdirs[1000][1000];
   int isubdirs = 0;
 
-  char rootdir[100];
+  char rootdir[1000];
   strcpy(rootdir, parentdir);
 
   FILE *fp = fopen("list.txt", "w");
@@ -62,6 +62,7 @@ seek:
     }
     g_dir_close(dir);
     if (isubdirs > 0) {
+      memset(rootdir, 0, sizeof(rootdir));
       strcpy(rootdir, subdirs[--isubdirs]);
       goto seek;
     }

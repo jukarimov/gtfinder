@@ -18,20 +18,6 @@
 #include "gtfinder.h"
 
 char *query = NULL;
-char result[1000][100];
-int iresult = 0;
-
-void reset_result() {
-    iresult = 0;
-}
-int push_result(char *line) {
-    if (iresult >= 999) {
-       puts("Too many results...");
-       return -1;
-    }
-    strcpy(result[iresult++], line);
-    return 0;
-}
 
 void delete_event( GtkWidget *widget,
                               GdkEvent  *event,
@@ -56,28 +42,25 @@ static void do_search(GtkWidget *widget,
         return;
     printf("search: %s\n", query);
 
+    char results[1000 * 1000];
+    int result_lines = 0;
     int err_toomany = 0;
     char *err_toomany_msg = "too many results";
 
-    reset_result();
     FILE *fp = fopen("list.txt", "r");
-    char line[100];
+    char line[1000];
+    strcpy(results, "");
     while (fgets(line, sizeof(line), fp)) {
         if (strstr(line, query)) {
-            if (push_result(line) != 0) {
+            if (++result_lines >= 999) {
 		err_toomany = 1;
                 break;
 	    }
+	    strcat(results, line);
             printf("search: match: %s\n", line);
         }
     }
     fclose(fp);
-    char results[1000 * 100];
-    sprintf(results, "%d results\n", iresult);
-    int i = 0;
-    for (;i < iresult; i++) {
-        strcat(results, result[i]);
-    }
     if (err_toomany) {
         strcat(results, err_toomany_msg);
     }
