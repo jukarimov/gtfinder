@@ -53,10 +53,10 @@ static void do_search(GtkWidget *widget,
     while (fgets(line, sizeof(line), fp)) {
         if (strstr(line, query)) {
             if (++result_lines >= 999) {
-		err_toomany = 1;
+                err_toomany = 1;
                 break;
-	    }
-	    strcat(results, line);
+            }
+            strcat(results, line);
             printf("search: match: %s\n", line);
         }
     }
